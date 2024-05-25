@@ -1,4 +1,26 @@
 import random
+
+dataset = "small-test-dataset.txt" # change to user input
+
+trainInstances = []
+with open(dataset, "r") as file:
+    lines = file.readlines()
+    for line in lines:
+        # each item in the list trainInstances is another list with
+        # position 0 being the label, and the rest the features.
+        trainInstances.append(line.split())
+
+
+class Classifier:
+    def __init__(self):
+        self.trainingSet = trainInstances
+    #input set of training instances
+    def train(trainInstances):
+        trainInstances
+    #input a test instance, compare euc distance between test instance and all training points
+    def test(testInstance):
+        pass
+
 def random_evaluation(features):
     return random.random()
 
