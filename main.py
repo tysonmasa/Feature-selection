@@ -2,21 +2,33 @@ import random
 
 dataset = "small-test-dataset.txt" # change to user input
 
-trainInstances = []
+class Instance:
+    def __init__(self, label, features):
+        self.label = label
+        self.features = features
+
+trainInstances = [] #list of training instances
 with open(dataset, "r") as file:
     lines = file.readlines()
     for line in lines:
-        # each item in the list trainInstances is another list with
-        # position 0 being the label, and the rest the features.
-        trainInstances.append(line.split())
+        line = line.strip() #remove newline symbol
+        line = line.split() #turn the line into a list
+        instanceLabel = int(line[0])
+        instanceFeatures = []
+        for x in line[1:]:
+            instanceFeatures.append(int(x))
+        #Instance(label, feature(list))
+        tempInstance = Instance(instanceLabel, instanceFeatures)
+        trainInstances.append(tempInstance)
 
 
 class Classifier:
     def __init__(self):
-        self.trainingSet = trainInstances
+        self.trainingSet = []
     #input set of training instances
-    def train(trainInstances):
-        trainInstances
+    def train(self, trainingSet):
+        self.trainingSet = trainingSet
+        print("set trained")
     #input a test instance, compare euc distance between test instance and all training points
     def test(testInstance):
         pass
