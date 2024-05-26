@@ -30,7 +30,7 @@ class Classifier:
         self.trainingSet = trainingSet
         print("set trained")
     #input a test instance, compare euc distance between test instance and all training points
-    def test(testInstance):
+    def test(self, testInstance):
         pass
 
 def random_evaluation(features):
