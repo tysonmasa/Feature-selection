@@ -1,6 +1,7 @@
 import random
 import math
 import validator
+import numpy as np
 
 dataset = "small-test-dataset.txt"  
 
@@ -27,7 +28,19 @@ class Classifier:
         self.trainingSet = []
 
     def train(self, trainingSet):
-        self.trainingSet = trainingSet
+        # list of training instances
+        trainInstances = []  
+        with open(trainingSet, "r") as file:
+            lines = file.readlines()
+            for line in lines:
+                line = line.strip()  
+                line = line.split()  
+                # change to float
+                instanceLabel = float(line[0])  
+                instanceFeatures = [float(x) for x in line[1:]]
+                tempInstance = Instance(instanceLabel, instanceFeatures)
+                trainInstances.append(tempInstance)
+        self.trainingSet = trainInstances
         print("Training set loaded with", len(trainingSet), "instances")
 
     def test(self, testInstance):
@@ -45,6 +58,26 @@ class Classifier:
     @staticmethod
     def euclidean_distance(features1, features2):
         return math.sqrt(sum((f1 - f2) ** 2 for f1, f2 in zip(features1, features2)))
+
+
+class Validator:
+    def __init__(self, featureSubsest, classifier, dataSet):
+        self.featureSubset = featureSubsest #ex. [1,3,4], inedxes of features used
+        self.classifier = classifier # our classifier
+        self.dataSet = dataSet # our data (the small one or big one)
+
+    def evaluate(self) -> float:
+        NN = Classifier()
+        NN.train(self.dataSet)
+        correct = 0
+        for i in range(NN.trainingSet):
+            X_train = np.concatenate((NN.trainingSet[:i], NN.trainingSet[i+1:]))
+            y_train = np.concatenate((y[:i], y[i+1:]))
+            X_test, y_test = np.array([NN.trainingSet[i]]), np.array([y[i]])
+            self.classifier.fit(X_train, y_train)
+            y_pred = self.classifier.predict(X_test)
+            correct += np.count_nonzero(y_pred == y_test)
+        return correct / len(NN.trainingSet) * 100
 
 def random_evaluation(features):
     return random.random()
