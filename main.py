@@ -1,5 +1,6 @@
 import random
 import math
+import validator
 
 dataset = "small-test-dataset.txt"  
 
