@@ -1,6 +1,6 @@
 import random
 import math
-import validator
+#import validator
 import numpy as np
 
 dataset = "small-test-dataset.txt"  
@@ -11,6 +11,7 @@ class Instance:
         self.features = features
 
 # list of training instances
+'''
 trainInstances = []  
 with open(dataset, "r") as file:
     lines = file.readlines()
@@ -22,26 +23,19 @@ with open(dataset, "r") as file:
         instanceFeatures = [float(x) for x in line[1:]]
         tempInstance = Instance(instanceLabel, instanceFeatures)
         trainInstances.append(tempInstance)
+        '''
 
 class Classifier:
     def __init__(self):
         self.trainingSet = []
 
-    def train(self, trainingSet):
-        # list of training instances
-        trainInstances = []  
-        with open(trainingSet, "r") as file:
-            lines = file.readlines()
-            for line in lines:
-                line = line.strip()  
-                line = line.split()  
-                # change to float
-                instanceLabel = float(line[0])  
-                instanceFeatures = [float(x) for x in line[1:]]
-                tempInstance = Instance(instanceLabel, instanceFeatures)
-                trainInstances.append(tempInstance)
+    def train(self, x, y):
+        trainInstances = []
+        for i in x:
+            tempInstance = Instance(y[i], x[i])
+            trainInstances.append(tempInstance)
         self.trainingSet = trainInstances
-        print("Training set loaded with", len(trainingSet), "instances")
+        #print("Training set loaded with", len(self.trainingSet), "instances")
 
     def test(self, testInstance):
         nearest_instance = None
@@ -59,25 +53,23 @@ class Classifier:
     def euclidean_distance(features1, features2):
         return math.sqrt(sum((f1 - f2) ** 2 for f1, f2 in zip(features1, features2)))
 
-
 class Validator:
-    def __init__(self, featureSubsest, classifier, dataSet):
-        self.featureSubset = featureSubsest #ex. [1,3,4], inedxes of features used
-        self.classifier = classifier # our classifier
-        self.dataSet = dataSet # our data (the small one or big one)
+    def __init__(self, classifier):
+        self.classifier = classifier
 
-    def evaluate(self) -> float:
-        NN = Classifier()
-        NN.train(self.dataSet)
+    def evaluate(self, X: np.ndarray, y: np.ndarray, feature_subset: list) -> float:
+        X_subset = X[:, feature_subset]
         correct = 0
-        for i in range(NN.trainingSet):
-            X_train = np.concatenate((NN.trainingSet[:i], NN.trainingSet[i+1:]))
+        for i in range(len(X_subset)):
+            X_train = np.concatenate((X_subset[:i], X_subset[i+1:]))
             y_train = np.concatenate((y[:i], y[i+1:]))
-            X_test, y_test = np.array([NN.trainingSet[i]]), np.array([y[i]])
-            self.classifier.fit(X_train, y_train)
-            y_pred = self.classifier.predict(X_test)
+            X_test, y_test = np.array([X_subset[i]]), np.array([y[i]])
+            self.classifier.train(X_train, y_train)
+            y_pred = self.classifier.test(X_test)
             correct += np.count_nonzero(y_pred == y_test)
-        return correct / len(NN.trainingSet) * 100
+        return correct / len(X_subset) * 100
+
+
 
 def random_evaluation(features):
     return random.random()
@@ -147,11 +139,13 @@ def main():
     print("1. Forward Selection")
     print("2. Backward Elimination")
     algorithm_choice = int(input())
-    
+
+    '''
     classifier = Classifier()
     # Train the classifier with the training instances
     classifier.train(trainInstances)  
-    
+    '''
+
     if algorithm_choice == 1:
         print("Forward Selection Trace:")
         forward_selection_trace = forward_selection(num_features)
@@ -161,11 +155,30 @@ def main():
     else:
         print("Invalid choice. Please select 1 or 2.")
 
+    '''
     # Allow the user to input a test instance
     print("Please enter the test instance feature values separated by spaces:")
     test_features = list(map(float, input().split()))
     test_instance = Instance(0, test_features)
     predicted_label = classifier.test(test_instance)
     print("Predicted label for the test instance:", predicted_label)
+    '''
+
+    smalldata = np.loadtxt('small-test-dataset.txt')
+    largedata = np.loadtxt('large-test-dataset.txt')
+
+    small_X = smalldata[:, 1:] #feats
+    small_y = smalldata[:, 0] #labels
+    large_X = largedata[:, 1:]
+    large_y = largedata[:, 0]
+
+    classifier = Classifier()
+    validator = Validator(classifier)
+
+    accuracy = validator.evaluate(small_X, small_y, [2, 4, 6])
+    print(f"smalldata Accuracy: {accuracy}%")
+
+    accuracy = validator.evaluate(large_X, large_y, [0, 14, 26])
+    print(f"largedata Accuracy: {accuracy}%")
 
 main()
