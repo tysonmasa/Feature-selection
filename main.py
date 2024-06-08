@@ -3,27 +3,11 @@ import math
 #import validator
 import numpy as np
 
-dataset = "small-test-dataset.txt"  
 
 class Instance:
     def __init__(self, label, features):
         self.label = label
         self.features = features
-
-# list of training instances
-'''
-trainInstances = []  
-with open(dataset, "r") as file:
-    lines = file.readlines()
-    for line in lines:
-        line = line.strip()  
-        line = line.split()  
-        # change to float
-        instanceLabel = float(line[0])  
-        instanceFeatures = [float(x) for x in line[1:]]
-        tempInstance = Instance(instanceLabel, instanceFeatures)
-        trainInstances.append(tempInstance)
-        '''
 
 class Classifier:
     def __init__(self):
@@ -140,11 +124,6 @@ def main():
     print("2. Backward Elimination")
     algorithm_choice = int(input())
 
-    '''
-    classifier = Classifier()
-    # Train the classifier with the training instances
-    classifier.train(trainInstances)  
-    '''
 
     if algorithm_choice == 1:
         print("Forward Selection Trace:")
