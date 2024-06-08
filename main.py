@@ -31,8 +31,8 @@ class Classifier:
 
     def train(self, x, y):
         trainInstances = []
-        for i in x:
-            tempInstance = Instance(y[i], x[i])
+        for i in range(len(x)):
+            tempInstance = Instance(y[i], x[i]) #(label,features)
             trainInstances.append(tempInstance)
         self.trainingSet = trainInstances
         #print("Training set loaded with", len(self.trainingSet), "instances")
@@ -42,7 +42,7 @@ class Classifier:
         nearest_distance = float('inf')
 
         for trainInstance in self.trainingSet:
-            distance = self.euclidean_distance(testInstance.features, trainInstance.features)
+            distance = self.euclidean_distance(testInstance, trainInstance.features)
             if distance < nearest_distance:
                 nearest_distance = distance
                 nearest_instance = trainInstance
@@ -63,7 +63,7 @@ class Validator:
         for i in range(len(X_subset)):
             X_train = np.concatenate((X_subset[:i], X_subset[i+1:]))
             y_train = np.concatenate((y[:i], y[i+1:]))
-            X_test, y_test = np.array([X_subset[i]]), np.array([y[i]])
+            X_test, y_test = X_subset[i], np.array([y[i]])
             self.classifier.train(X_train, y_train)
             y_pred = self.classifier.test(X_test)
             correct += np.count_nonzero(y_pred == y_test)
