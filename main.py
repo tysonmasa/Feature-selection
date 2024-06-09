@@ -1,9 +1,6 @@
 import random
 import math
-#import validator
 import numpy as np
-
-
 class Instance:
     def __init__(self, label, features):
         self.label = label
@@ -53,8 +50,6 @@ class Validator:
             correct += np.count_nonzero(y_pred == y_test)
         return correct / len(X_subset) * 100
 
-
-
 def evaluation(features, x, y):
     classifier = Classifier()
     validator = Validator(classifier)
@@ -86,6 +81,7 @@ def forward_selection(num_features, x, y):
                 best_feature_set = current_set_of_features.copy()
             print(f"Best set of features so far: {current_set_of_features}, with accuracy {best_accuracy:.1f}%")
 
+    best_feature_set = [feature + 1 for feature in best_feature_set]
     print(f"Finished search!! The best feature subset is {best_feature_set}, which has an accuracy of {best_overall_accuracy:.1f}%")
     return best_feature_set, best_overall_accuracy
 
@@ -93,7 +89,6 @@ def backward_elimination(num_features, x, y):
     current_set_of_features = list(range(0, num_features))
     best_overall_accuracy = evaluation(current_set_of_features, x, y)
     best_feature_set = current_set_of_features.copy()
-
     print(f"Initial set {current_set_of_features} accuracy is {best_overall_accuracy:.1f}%")
     
     for i in range(num_features - 1):
@@ -104,6 +99,7 @@ def backward_elimination(num_features, x, y):
             temp_set = current_set_of_features.copy()
             temp_set.remove(feature)
             accuracy = evaluation(temp_set, x, y)
+            temp_set = [temp + 1 for temp in temp_set]
             print(f"Using feature(s) {temp_set} accuracy is {accuracy:.1f}%")
             
             if accuracy > best_accuracy:
@@ -117,20 +113,33 @@ def backward_elimination(num_features, x, y):
                 best_feature_set = current_set_of_features.copy()
             print(f"Best set of features so far: {current_set_of_features}, with accuracy {best_accuracy:.1f}%")
 
+    best_feature_set = [feature + 1 for feature in best_feature_set]
     print(f"Finished search!! The best feature subset is {best_feature_set}, which has an accuracy of {best_overall_accuracy:.1f}%")
     return best_feature_set, best_overall_accuracy
 
 def main():
-    datachoice = int(input("Type 1 for small dataset or 2 for large dataset"))
+    print("Type the number of the dataset you want to use:")
+    print("1. Part II Sample Dataset")
+    print("2. Group Personal Dataset 51")
+    datasetchoice = int(input())
+    
+    print("Type the number of the type of dataset you want to use:")
+    print("1. Small Dataset")
+    print("2. Large Dataset")
+    datachoice = int(input())
 
     print("Type the number of the algorithm you want to run:")
     print("1. Forward Selection")
     print("2. Backward Elimination")
     algorithm_choice = int(input())
 
-    smalldata = np.loadtxt('small-test-dataset.txt')
-    largedata = np.loadtxt('large-test-dataset.txt')
-
+    if datasetchoice == 1:
+        smalldata = np.loadtxt('small-test-dataset.txt')
+        largedata = np.loadtxt('large-test-dataset.txt')
+    else:
+        smalldata = np.loadtxt('CS170_Spring_2024_Small_data__51.txt')
+        largedata = np.loadtxt('CS170_Spring_2024_Large_data__51.txt')
+    
     small_X = smalldata[:, 1:] #feats
     small_y = smalldata[:, 0] #labels
     large_X = largedata[:, 1:]
@@ -152,11 +161,5 @@ def main():
             backward_elimination_trace = backward_elimination(len(largedata[0,1:]), large_X, large_y)
     else:
         print("Invalid choice. Please select 1 or 2.")
-
-    #accuracy = validator.evaluate(small_X, small_y, [2, 4, 6])
-   # print(f"smalldata Accuracy: {accuracy}%")
-
-    #accuracy = validator.evaluate(large_X, large_y, [0, 14, 26])
-    #print(f"largedata Accuracy: {accuracy}%")
 
 main()
