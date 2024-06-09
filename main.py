@@ -145,6 +145,12 @@ def main():
     large_X = largedata[:, 1:]
     large_y = largedata[:, 0]
 
+    normalize = input("normalize? [y/n]")
+    
+    if normalize == "y":
+        small_X = (small_X - small_X.mean())/small_X.std()
+        large_X = (large_X - large_X.mean())/large_X.std()
+    
     if algorithm_choice == 1:
         if datachoice == 1:
             print(f"Forward Selection Trace on small dataset with {len(smalldata[0,1:])} features:")
