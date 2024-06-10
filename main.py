@@ -1,4 +1,5 @@
 import random
+import matplotlib.pyplot as plt
 import math
 import numpy as np
 class Instance:
@@ -154,18 +155,45 @@ def main():
     if algorithm_choice == 1:
         if datachoice == 1:
             print(f"Forward Selection Trace on small dataset with {len(smalldata[0,1:])} features:")
-            forward_selection_trace = forward_selection(len(smalldata[0,1:]), small_X, small_y)
+            featsUsed, accuracy = forward_selection(len(smalldata[0,1:]), small_X, small_y)
         elif datachoice == 2:
             print("Forward Selection Trace on large dataset:")
-            forward_selection_trace = forward_selection(len(largedata[0,1:]), large_X, large_y)
+            featsUsed, accuracy = forward_selection(len(largedata[0,1:]), large_X, large_y)
     elif algorithm_choice == 2:
         if datachoice == 1:
             print("Backward Elimination Trace on small dataset:")
-            backward_elimination_trace = backward_elimination(len(smalldata[0,1:]), small_X, small_y)
+            featsUsed, accuracy = backward_elimination(len(smalldata[0,1:]), small_X, small_y)
         elif datachoice == 2:
             print("Backward Elimination Trace on large dataset:")
-            backward_elimination_trace = backward_elimination(len(largedata[0,1:]), large_X, large_y)
+            featsUsed, accuracy = backward_elimination(len(largedata[0,1:]), large_X, large_y)
     else:
         print("Invalid choice. Please select 1 or 2.")
+
+    feat11 = []
+    feat12 = []
+    pos = 0
+    for x in smalldata[:,0]:
+        if x <= 1.5:
+            feat11.append(smalldata[pos,featsUsed[0]])
+        else:
+            feat12.append(smalldata[pos,featsUsed[0]])
+        pos += 1
+
+    feat21 = []
+    feat22 = []
+    pos = 0
+    for x in smalldata[:,0]:
+        if x <= 1.5:
+            feat21.append(smalldata[pos,featsUsed[1]])
+        else:
+            feat22.append(smalldata[pos,featsUsed[1]])
+        pos += 1
+    plt.scatter(feat11, feat21)
+    plt.scatter(feat12, feat22)
+
+    plt.xlabel(f"feature {featsUsed[0]}")
+    plt.ylabel(f"feature {featsUsed[1]}")
+    plt.title(f"Scatter plot of features {featsUsed[0]} vs. {featsUsed[1]}")
+    plt.show()
 
 main()
